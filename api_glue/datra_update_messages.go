@@ -1,4 +1,4 @@
-package main
+package apiglue
 
 type StoreUpdateMessage struct {
 	Type    string `json:"type" default:"store-update"`

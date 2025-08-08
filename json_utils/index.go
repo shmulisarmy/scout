@@ -63,8 +63,8 @@ func Copy[T any](src *T) (*T, error) {
 }
 
 // Alternative version that panics on error (similar to must-style functions)
-func json_copy_must[T any](src *T) *T {
-	dst, err := json_copy(src)
+func Json_copy_must[T any](src *T) *T {
+	dst, err := Copy(src)
 	if err != nil {
 		panic(err)
 	}

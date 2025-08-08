@@ -34,9 +34,10 @@ func generate_ts_route(file_name string, path_base_name string, params []reflect
 	return output
 }
 
-var to_add_to_ts_file = "import { handle_server_sync } from \"./sync\";\n"
+var to_add_to_ts_file = "import { handle_server_sync } from \"../apiglue/sync\";\n"
 
-func make_route(r *gin.Engine, path string, f interface{}) {
+func Make_route(r *gin.Engine, path string, f interface{}) {
+	running_status.route_made = true
 	//f is a function that takes gc as param 1
 
 	params := []reflect.Type{}
@@ -46,7 +47,7 @@ func make_route(r *gin.Engine, path string, f interface{}) {
 		}
 		params = append(params, reflect.ValueOf(f).Type().In(param))
 	}
-	ts_code := generate_ts_route(src_folder+"/routes.ts", path, params)
+	ts_code := generate_ts_route(Config.Src_folder+"/routes.ts", path, params)
 	for i := range params {
 		path += "/:_" + strconv.Itoa(i)
 	}

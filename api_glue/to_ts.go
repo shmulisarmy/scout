@@ -80,31 +80,35 @@ func fromStructToTSType(t reflect.Type, queue *[]reflect.Type, parsed map[string
 // === Example structs ===
 
 type Ts_Type_Converter struct {
-	parsed map[string]bool
-	queue  []reflect.Type
-	file   string
+	Parsed map[string]bool
+	Queue  []reflect.Type
+	File   string
 }
 
 func (this *Ts_Type_Converter) Convert() string {
+	running_status.converter_ran = true
+	if running_status.gen_ran {
+		panic("you shouldnt call this after calling gen")
+	}
 
 	var results strings.Builder
 
-	for len(this.queue) > 0 {
-		t := this.queue[0]
-		this.queue = this.queue[1:]
+	for len(this.Queue) > 0 {
+		t := this.Queue[0]
+		this.Queue = this.Queue[1:]
 
-		ts := fromStructToTSType(t, &this.queue, this.parsed)
+		ts := fromStructToTSType(t, &this.Queue, this.Parsed)
 		if ts != "" {
 			results.WriteString(ts + "\n")
 		}
 	}
 
 	// Write the resultsts to a file
-	err := os.WriteFile(this.file, []byte(results.String()), 0644)
+	err := os.WriteFile(this.File, []byte(results.String()), 0644)
 	if err != nil {
-		fmt.Println("Failed to write "+this.file+":", err)
+		fmt.Println("Failed to write "+this.File+":", err)
 	} else {
-		fmt.Println("Generated " + this.file + " successfully.")
+		fmt.Println("Generated " + this.File + " successfully.")
 	}
 	return results.String()
 }
