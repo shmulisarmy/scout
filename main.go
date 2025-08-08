@@ -1,9 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	apiglue "gin-sevalla-app/api_glue"
 	"log"
+	"reflect"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -54,53 +56,103 @@ func ws_handler(c *gin.Context) {
 	delete(clients, conn)
 }
 
+var todo_id_upto = 0
+
+type Todo struct {
+	Title          string `json:"title"`
+	Done           bool   `json:"done"`
+	Id             int    `json:"id"`
+	Estimated_time string `json:"estimated_time"`
+	Created_at     string `json:"created_at"`
+}
+
+func new_todo(title string) Todo {
+	todo_id_upto++
+	return Todo{
+		Title:          title,
+		Done:           false,
+		Id:             todo_id_upto,
+		Estimated_time: "",
+		Created_at:     time.Now().Format("2006-01-02 15:04:05"),
+	}
+}
+
+var todos = apiglue.NewServerState([]Todo{
+	new_todo("todo 1"),
+	new_todo("todo 2"),
+})
+
 func main() {
 	r := gin.Default()
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:5173"}
-	config.AllowCredentials = true
-	r.Use(cors.New(config))
-	// r.LoadHTMLGlob("templates/*")
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:5173", "http://localhost:5001"}, // your frontend's origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"sync"}, // expose your custom header
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
-	// r.GET("/scouters", func(c *gin.Context) {
-	// 	for _, live_scout := range live_scouts {
-	// 		report := live_scout.Scout()
-	// 		d := DisplayStructDetailed(report)
-	// 		fmt.Println(d)
-	// 		d = DisplayStructDetailed(live_scout)
-	// 		fmt.Println(d)
-	// 	}
-	// })
 	apiglue.Config.Src_folder = "./frontend/generated"
 	apiglue.Config.Port = "8080"
 	apiglue.Config.Framework = "zustand"
 	apiglue.OnConfigSet()
-	// converter := apiglue.Ts_Type_Converter{
-	// 	Parsed: map[string]bool{},
-	// 	Queue: []reflect.Type{
-	// 		reflect.TypeOf(live_scouts[0]),
-	// 		reflect.TypeOf(live_scout.State),
-	// 	},
-	// 	File: apiglue.Config.Src_folder + "/types.ts",
-	// }
-	// converter.Convert()
-	// scouts := apiglue.NewServerState(live_scouts)
-	live_scouts.Add_to_ts()
-	live_scout.Add_to_ts()
+
+	converter := apiglue.Ts_Type_Converter{
+		Parsed: map[string]bool{},
+		Queue: []reflect.Type{
+			reflect.TypeOf(Todo{}),
+		},
+		File: "./frontend/generated/types.ts",
+	}
+	converter.Convert()
+
+	apiglue.Make_route(r, "get_todos", func(c *gin.Context) {
+		header_json, _ := json.Marshal(apiglue.MutableStateSender{
+			Type: "mutable-state-sender",
+			Key:  todos.Key,
+			Data: todos.State,
+		})
+		c.Header("sync", string(header_json))
+		c.JSON(200, gin.H{
+			"message": "todos fetched",
+		})
+	})
+
+	apiglue.Make_route(r, "add_todo", func(c *gin.Context, new_todo_name string) {
+		todos.State = append(todos.State, new_todo(new_todo_name))
+		header_json, _ := json.Marshal(apiglue.MutableAppendMessage{
+			Type:    "mutable-append",
+			Key:     todos.Key,
+			Path:    "",
+			NewData: new_todo(new_todo_name),
+		})
+		// c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("sync", string(header_json))
+		c.JSON(200, gin.H{
+			"message": "todo added",
+		})
+	})
+
 	apiglue.Make_route(r, "ws", ws_handler)
 
-	apiglue.Make_route(r, "scouters", func(c *gin.Context) {
-		fmt.Println("scouters")
-		for _, live_scout := range live_scouts.State {
-			report := live_scout.Scout()
-			d := DisplayStructDetailed(report)
-			fmt.Println(d)
-			d = DisplayStructDetailed(live_scout)
-			fmt.Println(d)
+	apiglue.Make_route(r, "delete_todo", func(c *gin.Context, id int) {
+		for i := range todos.State {
+			if todos.State[i].Id == id {
+				todos.State = append(todos.State[:i], todos.State[i+1:]...)
+				break
+			}
 		}
+		header_json, _ := json.Marshal(apiglue.MutableStateSender{
+			Type: "mutable-state-sender",
+			Key:  todos.Key,
+			Data: todos.State,
+		})
+		c.Header("sync", string(header_json))
 	})
 
 	people.Add_to_ts()
+	todos.Add_to_ts()
 
 	apiglue.Gen()
 

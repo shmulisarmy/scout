@@ -2,7 +2,6 @@ package apiglue
 
 import (
 	"log"
-	"os"
 	"reflect"
 	"runtime"
 	"strconv"
@@ -23,7 +22,7 @@ func generate_ts_route(file_name string, path_base_name string, params []reflect
 	for i := range params {
 		full_fetch_string += "/${" + "_" + strconv.Itoa(i) + "}"
 	}
-	output += "\tfetch(`http://localhost:" + os.Getenv("PORT") + "/" + full_fetch_string + "`, {credentials: 'include'})\n"
+	output += "\tfetch(`http://localhost:" + Config.Port + "/" + full_fetch_string + "`, {credentials: 'include'})\n"
 	output += "\t.then(response => {\n"
 	output += "\tif (response.headers.get(\"sync\")){\n"
 	output += "\t\thandle_server_sync(JSON.parse(response.headers.get(\"sync\")))\n"
@@ -34,7 +33,7 @@ func generate_ts_route(file_name string, path_base_name string, params []reflect
 	return output
 }
 
-var to_add_to_ts_file = "import { handle_server_sync } from \"../apiglue/sync\";\n"
+var to_add_to_ts_file = "import { handle_server_sync } from \"../apiglue/zustand_sync\";\n"
 
 func Make_route(r *gin.Engine, path string, f interface{}) {
 	running_status.route_made = true

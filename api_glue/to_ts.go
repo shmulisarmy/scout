@@ -1,8 +1,6 @@
 package apiglue
 
 import (
-	"fmt"
-	"os"
 	"reflect"
 	"strings"
 )
@@ -105,13 +103,6 @@ func (this *Ts_Type_Converter) Convert() string {
 			results.WriteString(ts + "\n")
 		}
 	}
-
-	// Write the resultsts to a file
-	err := os.WriteFile(this.File, []byte(results.String()), 0644)
-	if err != nil {
-		fmt.Println("Failed to write "+this.File+":", err)
-	} else {
-		fmt.Println("Generated " + this.File + " successfully.")
-	}
+	to_add_to_mutable_ts_file += results.String()
 	return results.String()
 }

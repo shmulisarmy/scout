@@ -49,6 +49,8 @@ if (typeof window !== 'undefined') {
 				(window as any).%s = %s
 			}
 		`, this.Key, state_type_name, string(j), this.Key, this.Key)
+	default:
+		panic("unknown framework")
 	}
 
 }

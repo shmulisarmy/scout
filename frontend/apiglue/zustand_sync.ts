@@ -110,5 +110,28 @@ export function handle_server_sync(j: any) {
             }
             break;
         }
+        case "mutable-delete": {
+            console.log('handling mutable-delete', j);
+            if (typeof window !== 'undefined') {
+                window[j.key].setState((prev: any) => {
+                    const split_path = j.path.split('.');
+                    const last = split_path.pop();
+                    let target = { ...prev } as any;
+                    let cursor = target.state;
+
+                    for (const part of split_path) {
+                        if (!(part in cursor)) cursor[part] = {};
+                        else cursor[part] = { ...cursor[part] };
+                        cursor = cursor[part];
+                    }
+
+                    delete cursor[last!];
+
+                    return target;
+                });
+            }
+            break;
+        }
+
     }
 }
