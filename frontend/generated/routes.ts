@@ -1,6 +1,6 @@
 import { handle_server_sync } from "../apiglue/sync";
 export function ws(){
-	//LINK /Users/shmuli/repositories/scout/main.go:88
+	//LINK /Users/shmuli/repositories/scout/main.go:90
 	fetch(`http://localhost:5001/ws`, {credentials: 'include'})
 	.then(response => {
 	if (response.headers.get("sync")){
@@ -10,7 +10,7 @@ export function ws(){
 	.then(data => console.log(data))
 }
 export function scouters(){
-	//LINK /Users/shmuli/repositories/scout/main.go:90
+	//LINK /Users/shmuli/repositories/scout/main.go:92
 	fetch(`http://localhost:5001/scouters`, {credentials: 'include'})
 	.then(response => {
 	if (response.headers.get("sync")){

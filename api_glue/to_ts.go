@@ -28,6 +28,9 @@ func typeToTSType(t reflect.Type, queue *[]reflect.Type, parsed map[string]bool)
 		if t.Name() != "" && !parsed[t.Name()] {
 			*queue = append(*queue, t)
 		}
+		if t.Name() == "" {
+			return "any"
+		}
 		return t.Name()
 	default:
 		return "any"

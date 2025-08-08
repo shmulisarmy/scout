@@ -71,8 +71,10 @@ func main() {
 	// 		fmt.Println(d)
 	// 	}
 	// })
-	apiglue.Config.Src_folder = "./generated"
+	apiglue.Config.Src_folder = "./frontend/generated"
 	apiglue.Config.Port = "8080"
+	apiglue.Config.Framework = "zustand"
+	apiglue.OnConfigSet()
 	// converter := apiglue.Ts_Type_Converter{
 	// 	Parsed: map[string]bool{},
 	// 	Queue: []reflect.Type{
@@ -98,10 +100,31 @@ func main() {
 		}
 	})
 
+	people.Add_to_ts()
+
 	apiglue.Gen()
 
 	r.Run("localhost:" + apiglue.Config.Port)
 }
+
+type Person struct {
+	Name  string `json:"name"`
+	Age   int    `json:"age"`
+	Email string `json:"email"`
+}
+
+var people = apiglue.NewServerState([]Person{
+	{
+		Name:  "shmuli",
+		Age:   21,
+		Email: "shmuli@shmuli.com",
+	},
+	{
+		Name:  "berel",
+		Age:   25,
+		Email: "berel@shmuli.com",
+	},
+})
 
 var live_scout = apiglue.NewServerState(Live_Scout{
 	Links:        make(map[string]struct{}),

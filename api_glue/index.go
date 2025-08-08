@@ -13,6 +13,7 @@ import (
 var Config struct {
 	Port       string
 	Src_folder string
+	Framework  string
 }
 
 // var html_base_page_string = utils.Load_from_file("templates/base_page.html")
@@ -36,7 +37,16 @@ func NewServerState[T any](state T) ServerState[T] {
 	}
 }
 
-var to_add_to_mutable_ts_file string = "import { mutableWritable } from \"../apiglue/mutableWritable.ts\"\n"
+var to_add_to_mutable_ts_file_beginning = map[string]string{
+	"zustand": "import { create } from 'zustand'\n",
+	"svelte":  "import { mutableWritable } from \"../apiglue/mutableWritable.ts\"\n",
+}
+
+var to_add_to_mutable_ts_file = ""
+
+func OnConfigSet() {
+	to_add_to_mutable_ts_file = to_add_to_mutable_ts_file_beginning[Config.Framework]
+}
 
 var running_status = struct {
 	gen_ran       bool
