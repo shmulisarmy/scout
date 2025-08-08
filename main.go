@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	apiglue "gin-sevalla-app/api_glue"
 	"log"
 	"reflect"
@@ -109,12 +108,7 @@ func main() {
 	converter.Convert()
 
 	apiglue.Make_route(r, "api/get_todos", func(c *gin.Context) {
-		header_json, _ := json.Marshal(apiglue.MutableStateSender{
-			Type: "mutable-state-sender",
-			Key:  todos.Key,
-			Data: todos.State,
-		})
-		c.Header("sync", string(header_json))
+		todos.Add_state_header(c)
 		c.JSON(200, gin.H{
 			"message": "todos fetched",
 		})
@@ -122,14 +116,7 @@ func main() {
 
 	apiglue.Make_route(r, "api/add_todo", func(c *gin.Context, new_todo_name string) {
 		todos.State = append(todos.State, new_todo(new_todo_name))
-		header_json, _ := json.Marshal(apiglue.MutableAppendMessage{
-			Type:    "mutable-append",
-			Key:     todos.Key,
-			Path:    "",
-			NewData: new_todo(new_todo_name),
-		})
-		// c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("sync", string(header_json))
+		todos.Add_append_header(c, "", new_todo(new_todo_name))
 		c.JSON(200, gin.H{
 			"message": "todo added",
 		})
@@ -144,12 +131,7 @@ func main() {
 				break
 			}
 		}
-		header_json, _ := json.Marshal(apiglue.MutableStateSender{
-			Type: "mutable-state-sender",
-			Key:  todos.Key,
-			Data: todos.State,
-		})
-		c.Header("sync", string(header_json))
+		todos.Add_state_header(c)
 	})
 
 	people.Add_to_ts()
