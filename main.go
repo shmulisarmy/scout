@@ -157,7 +157,13 @@ func main() {
 
 	apiglue.Gen()
 
-	r.Run("localhost:" + apiglue.Config.Port)
+	address := "0.0.0.0:" + apiglue.Config.Port
+	log.Println("Starting server on", address)
+
+	if err := r.Run(address); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+
 }
 
 type Person struct {
