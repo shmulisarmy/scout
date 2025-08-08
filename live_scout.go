@@ -4,11 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	apiglue "gin-sevalla-app/api_glue"
-	"log"
-	"os"
 	"strings"
-
-	"google.golang.org/genai"
 )
 
 func clean_ai_json_response(json_string string) string {
@@ -22,17 +18,18 @@ func clean_ai_json_response(json_string string) string {
 }
 
 var ctx = context.Background()
-var client, ai_api_initialization_err = genai.NewClient(ctx, &genai.ClientConfig{
-	APIKey:  os.Getenv("GEMINI_API_KEY"),
-	Backend: genai.BackendGeminiAPI,
-})
+
+//	var client, ai_api_initialization_err = genai.NewClient(ctx, &genai.ClientConfig{
+//		APIKey:  os.Getenv("GEMINI_API_KEY"),
+//		Backend: genai.BackendGeminiAPI,
+//	})
 var response_json_example, _ = json.Marshal(Res{})
 
-func init() {
-	if ai_api_initialization_err != nil {
-		log.Fatal(ai_api_initialization_err)
-	}
-}
+// func init() {
+// 	if ai_api_initialization_err != nil {
+// 		log.Fatal(ai_api_initialization_err)
+// 	}
+// }
 
 type Live_Scout struct {
 	Links        map[string]struct{} `json:"links"`
@@ -52,34 +49,34 @@ type Res struct {
 	Predicted_timeline         string   `json:"predicted_timeline"`
 }
 
-func (live_scout *Live_Scout) Scout() Res {
-	previous_context := if_else(live_scout.Notes != "", "these are the previous notes, would you like to add to it? new notes: "+live_scout.Notes, "there are no previous notes, would you like to some to be used later as context?")
+// func (live_scout *Live_Scout) Scout() Res {
+// 	previous_context := if_else(live_scout.Notes != "", "these are the previous notes, would you like to add to it? new notes: "+live_scout.Notes, "there are no previous notes, would you like to some to be used later as context?")
 
-	result, err := client.Models.GenerateContent(
-		ctx,
-		"gemini-2.5-flash",
-		genai.Text("for the following response only with json: in yes or no terms. <"+live_scout.To_Scout_For+"> please provide all assosiated links. please provide only links that actually work. also add notes regarding how close you think you are towards achieving the goal. "+previous_context+" please use the following format for your response: "+string(response_json_example)),
-		nil,
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-	cleaned := clean_ai_json_response(result.Text())
-	res := Res{}
-	json.Unmarshal([]byte(cleaned), &res)
-	//////
-	if res.Goal_Achieved == "yes" {
-		live_scout.Scouted = true
-		live_scout.As_Of = res.As_Of
-	}
-	if res.Would_Like_to_Update_Notes == "yes" {
-		live_scout.Notes = res.New_Notes
-	}
-	for _, link := range res.Links {
-		live_scout.Links[link] = struct{}{}
-	}
-	return res
-}
+// 	result, err := client.Models.GenerateContent(
+// 		ctx,
+// 		"gemini-2.5-flash",
+// 		genai.Text("for the following response only with json: in yes or no terms. <"+live_scout.To_Scout_For+"> please provide all assosiated links. please provide only links that actually work. also add notes regarding how close you think you are towards achieving the goal. "+previous_context+" please use the following format for your response: "+string(response_json_example)),
+// 		nil,
+// 	)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	cleaned := clean_ai_json_response(result.Text())
+// 	res := Res{}
+// 	json.Unmarshal([]byte(cleaned), &res)
+// 	//////
+// 	if res.Goal_Achieved == "yes" {
+// 		live_scout.Scouted = true
+// 		live_scout.As_Of = res.As_Of
+// 	}
+// 	if res.Would_Like_to_Update_Notes == "yes" {
+// 		live_scout.Notes = res.New_Notes
+// 	}
+// 	for _, link := range res.Links {
+// 		live_scout.Links[link] = struct{}{}
+// 	}
+// 	return res
+// }
 
 var live_scouts = apiglue.NewServerState([]Live_Scout{
 	{
