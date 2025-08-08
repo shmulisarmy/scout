@@ -86,7 +86,15 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:5173", "http://localhost:5001"}, // your frontend's origin
+		AllowOrigins: []string{
+			"http://localhost:3000", // Next.js dev server (you have this)
+			"http://localhost:5173", // Vite dev server (you have this)
+			"http://localhost:5001", // Your other service (you have this)
+			"https://v0.dev",        // v0's preview environment
+			"https://*.v0.dev",      // v0's subdomains
+			"https://vercel.app",    // If deployed to Vercel
+			"https://*.vercel.app",  // Vercel preview deployments
+		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"sync"}, // expose your custom header
