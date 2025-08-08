@@ -17,7 +17,7 @@ if (typeof window !== 'undefined') {
 		
 		
 export const useTodosStore = create<{state: Todo[]}>((set) => ({
-	state: [{"title":"todo 1","done":false,"id":1,"estimated_time":"","created_at":"2025-08-08 07:46:28"},{"title":"todo 2","done":false,"id":2,"estimated_time":"","created_at":"2025-08-08 07:46:28"}],
+	state: [{"title":"todo 1","done":false,"id":1,"estimated_time":"","created_at":"2025-08-08 09:09:12"},{"title":"todo 2","done":false,"id":2,"estimated_time":"","created_at":"2025-08-08 09:09:12"}],
 }))
 if (typeof window !== 'undefined') {
 	(window as any).Todos = useTodosStore

@@ -1,6 +1,6 @@
 import { handle_server_sync } from "../apiglue/zustand_sync";
 export function api/get_todos(){
-	//LINK /Users/shmuli/repositories/scout/main.go:119
+	//LINK /Users/shmuli/repositories/scout/main.go:111
 	fetch(`http://localhost:8080/api/get_todos`, {credentials: 'include'})
 	.then(response => {
 	if (response.headers.get("sync")){
@@ -10,7 +10,7 @@ export function api/get_todos(){
 	.then(data => console.log(data))
 }
 export function api/add_todo(_0: string, ){
-	//LINK /Users/shmuli/repositories/scout/main.go:131
+	//LINK /Users/shmuli/repositories/scout/main.go:123
 	fetch(`http://localhost:8080/api/add_todo/${_0}`, {credentials: 'include'})
 	.then(response => {
 	if (response.headers.get("sync")){
@@ -20,7 +20,7 @@ export function api/add_todo(_0: string, ){
 	.then(data => console.log(data))
 }
 export function api/ws(){
-	//LINK /Users/shmuli/repositories/scout/main.go:146
+	//LINK /Users/shmuli/repositories/scout/main.go:138
 	fetch(`http://localhost:8080/api/ws`, {credentials: 'include'})
 	.then(response => {
 	if (response.headers.get("sync")){
@@ -30,7 +30,7 @@ export function api/ws(){
 	.then(data => console.log(data))
 }
 export function api/delete_todo(_0: number, ){
-	//LINK /Users/shmuli/repositories/scout/main.go:148
+	//LINK /Users/shmuli/repositories/scout/main.go:140
 	fetch(`http://localhost:8080/api/delete_todo/${_0}`, {credentials: 'include'})
 	.then(response => {
 	if (response.headers.get("sync")){
