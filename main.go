@@ -107,7 +107,7 @@ func main() {
 	}
 	converter.Convert()
 
-	apiglue.Make_route(r, "get_todos", func(c *gin.Context) {
+	apiglue.Make_route(r, "api/get_todos", func(c *gin.Context) {
 		header_json, _ := json.Marshal(apiglue.MutableStateSender{
 			Type: "mutable-state-sender",
 			Key:  todos.Key,
@@ -119,7 +119,7 @@ func main() {
 		})
 	})
 
-	apiglue.Make_route(r, "add_todo", func(c *gin.Context, new_todo_name string) {
+	apiglue.Make_route(r, "api/add_todo", func(c *gin.Context, new_todo_name string) {
 		todos.State = append(todos.State, new_todo(new_todo_name))
 		header_json, _ := json.Marshal(apiglue.MutableAppendMessage{
 			Type:    "mutable-append",
@@ -134,9 +134,9 @@ func main() {
 		})
 	})
 
-	apiglue.Make_route(r, "ws", ws_handler)
+	apiglue.Make_route(r, "api/ws", ws_handler)
 
-	apiglue.Make_route(r, "delete_todo", func(c *gin.Context, id int) {
+	apiglue.Make_route(r, "api/delete_todo", func(c *gin.Context, id int) {
 		for i := range todos.State {
 			if todos.State[i].Id == id {
 				todos.State = append(todos.State[:i], todos.State[i+1:]...)
