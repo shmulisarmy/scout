@@ -83,6 +83,7 @@ var todos = apiglue.NewServerState([]Todo{
 })
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:5173", "http://localhost:5001"}, // your frontend's origin
