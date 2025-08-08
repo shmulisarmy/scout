@@ -94,6 +94,7 @@ func main() {
 			"https://*.v0.dev",      // v0's subdomains
 			"https://vercel.app",    // If deployed to Vercel
 			"https://*.vercel.app",  // Vercel preview deployments
+			"https://studio.firebase.google.com",
 		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
