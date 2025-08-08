@@ -95,6 +95,7 @@ func main() {
 			"https://vercel.app",    // If deployed to Vercel
 			"https://*.vercel.app",  // Vercel preview deployments
 			"https://studio.firebase.google.com",
+			"https://us-central1-studiop-429302.cloudfunctions.net",
 		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
