@@ -24,7 +24,7 @@ func generate_ts_route(file_name string, path_base_name string, params []reflect
 	for i := range params {
 		full_fetch_string += "/${" + "_" + strconv.Itoa(i) + "}"
 	}
-	output += "\tfetch(`http://localhost:" + Config.Port + "/" + full_fetch_string + "`, {credentials: 'include'})\n"
+	output += "\tfetch(`http://localhost:" + Config.Port + "/" + full_fetch_string + "`)\n"
 	output += "\t.then(response => {\n"
 	output += "\tif (response.headers.get(\"sync\")){\n"
 	output += "\t\thandle_server_sync(JSON.parse(response.headers.get(\"sync\")))\n"

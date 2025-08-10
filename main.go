@@ -142,6 +142,7 @@ func main() {
 	apiglue.Make_route(r, "api/kanban/move_task", kanban.Move_task)
 	apiglue.Make_route(r, "api/kanban/create_task", kanban.Create_task)
 	apiglue.Make_route(r, "api/kanban/get_board", kanban.Get_board)
+	apiglue.Make_route(r, "api/kanban/add_comment", kanban.Add_comment)
 	kanban.Main_Board.Add_to_ts()
 	//kanban
 

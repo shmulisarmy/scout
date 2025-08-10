@@ -28,6 +28,45 @@ func Move_task(c *gin.Context, task_id int, list string) {
 
 }
 
+func Add_comment(c *gin.Context, task_id int, author string, body string) {
+	task_exists := list_find_index(Main_Board.State.Tasks, func(task Task) bool {
+		return task.Id == task_id
+	}) != -1
+	if !task_exists {
+		c.JSON(400, gin.H{
+			"error": "task does not exist",
+		})
+		return
+	}
+	if author == "" {
+		c.JSON(400, gin.H{
+			"error": "author is required",
+		})
+		return
+	}
+	if body == "" {
+		c.JSON(400, gin.H{
+			"error": "no comment provided",
+		})
+		return
+	}
+	Main_Board.State.Comments = append(Main_Board.State.Comments, Comment{
+		Id:     len(Main_Board.State.Comments) + 1,
+		Body:   body,
+		Author: author,
+		TaskId: task_id,
+	})
+	Main_Board.Add_append_header(c, "comments", Comment{
+		Id:     len(Main_Board.State.Comments) + 1,
+		Body:   body,
+		Author: author,
+		TaskId: task_id,
+	})
+	c.JSON(200, gin.H{
+		"message": "comment added",
+	})
+}
+
 func Create_task(c *gin.Context, title string, list string, author string, deadline string) {
 	//basic bouncer
 	fmt.Printf("in create_task params are title: %s, list: %s, author: %s, deadline: %s\n", title, list, author, deadline)
