@@ -1,6 +1,7 @@
 package kanban
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -24,6 +25,7 @@ func Move_task(c *gin.Context, task_id int, list string) {
 
 func Create_task(c *gin.Context, title string, list string, author string, deadline string) {
 	//basic bouncer
+	fmt.Printf("in create_task params are title: %s, list: %s, author: %s, deadline: %s\n", title, list, author, deadline)
 	if title == "" {
 		c.JSON(400, gin.H{
 			"error": "title is required",
