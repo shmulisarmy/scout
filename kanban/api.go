@@ -9,6 +9,7 @@ import (
 )
 
 func Move_task(c *gin.Context, task_id int, list string) {
+	fmt.Printf("in move_task params are task_id: %d, list: %s\n", task_id, list)
 	if !list_contains(Main_Board.State.Lists, list) {
 		c.JSON(400, gin.H{
 			"error": "list must be one of " + strings.Join(Main_Board.State.Lists, ", "),
