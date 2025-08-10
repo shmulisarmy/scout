@@ -110,13 +110,14 @@ func Create_task(c *gin.Context, title string, list string, author string, deadl
 	}
 	//end bouncer
 
+	task_id_upto += 1
 	Main_Board.State.Tasks = append(Main_Board.State.Tasks, Task{
 		Title:    title,
 		List:     list,
 		Author:   author,
 		Time:     time.Now().Format("2006-01-02 15:04:05"),
 		Deadline: deadline,
-		Id:       len(Main_Board.State.Tasks) + 1,
+		Id:       task_id_upto,
 	})
 	Main_Board.Add_append_header(c, "tasks", Task{
 		Title:    title,
@@ -124,12 +125,31 @@ func Create_task(c *gin.Context, title string, list string, author string, deadl
 		Author:   author,
 		Time:     time.Now().Format("2006-01-02 15:04:05"),
 		Deadline: deadline,
-		Id:       len(Main_Board.State.Tasks) + 1,
+		Id:       task_id_upto,
 	})
 	c.JSON(200, gin.H{
 		"message": "task created",
 	})
 }
+
+func Delete_task(c *gin.Context, task_id int) {
+	index := list_find_index(Main_Board.State.Tasks, func(task Task) bool {
+		return task.Id == task_id
+	})
+	if index == -1 {
+		c.JSON(400, gin.H{
+			"error": "task does not exist",
+		})
+		return
+	}
+	Main_Board.State.Tasks = append(Main_Board.State.Tasks[:index], Main_Board.State.Tasks[index+1:]...)
+	Main_Board.Add_delete_header(c, "tasks."+strconv.Itoa(index))
+	c.JSON(200, gin.H{
+		"message": "task deleted",
+	})
+}
+
+var task_id_upto = 5
 
 func Get_board(c *gin.Context) {
 	Main_Board.Add_state_header(c)

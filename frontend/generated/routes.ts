@@ -79,3 +79,13 @@ export function api_kanban_add_comment(_0: number, _1: string, _2: string, ){
 	return response.json()})
 	.then(data => console.log(data))
 }
+export function api_kanban_delete_task(_0: number, ){
+	//LINK /Users/shmuli/repositories/scout/main.go:146
+	fetch(`http://localhost:8080/api/kanban/delete_task/${_0}`)
+	.then(response => {
+	if (response.headers.get("sync")){
+		handle_server_sync(JSON.parse(response.headers.get("sync")))
+	}
+	return response.json()})
+	.then(data => console.log(data))
+}
