@@ -5,13 +5,15 @@ import (
 	"reflect"
 	"runtime"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func generate_ts_route(file_name string, path_base_name string, params []reflect.Type) string {
 	output := ""
-	output += "export function " + path_base_name + "("
+
+	output += "export function " + strings.ReplaceAll(path_base_name, "/", "_") + "("
 	for i := range params {
 		output += "_" + strconv.Itoa(i) + ": " + typeToTSType(params[i], nil, nil) + ", "
 	}

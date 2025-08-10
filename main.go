@@ -2,6 +2,7 @@ package main
 
 import (
 	apiglue "gin-sevalla-app/api_glue"
+	"gin-sevalla-app/kanban"
 	"log"
 	"reflect"
 	"time"
@@ -136,6 +137,13 @@ func main() {
 
 	people.Add_to_ts()
 	todos.Add_to_ts()
+
+	//kanban
+	apiglue.Make_route(r, "api/kanban/move_task", kanban.Move_task)
+	apiglue.Make_route(r, "api/kanban/create_task", kanban.Create_task)
+	apiglue.Make_route(r, "api/kanban/get_board", kanban.Get_board)
+	kanban.Main_Board.Add_to_ts()
+	//kanban
 
 	apiglue.Gen()
 
