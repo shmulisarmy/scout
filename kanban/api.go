@@ -21,7 +21,7 @@ func Move_task(c *gin.Context, task_id int, list string) {
 		return task.Id == task_id
 	})
 	Main_Board.State.Tasks[index].List = list
-	Main_Board.Add_update_header(c, "tasks."+strconv.Itoa(task_id)+".list", list)
+	Main_Board.Add_update_header(c, "tasks."+strconv.Itoa(index)+".list", list)
 	c.JSON(200, gin.H{
 		"message": "task moved",
 	})
