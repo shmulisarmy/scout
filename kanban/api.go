@@ -2,6 +2,7 @@ package kanban
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -16,8 +17,11 @@ func Move_task(c *gin.Context, task_id int, list string) {
 		})
 		return
 	}
-	Main_Board.State.Tasks[task_id].List = list
-	Main_Board.Add_update_header(c, "tasks."+string(task_id)+".list", list)
+	index := list_find_index(Main_Board.State.Tasks, func(task Task) bool {
+		return task.Id == task_id
+	})
+	Main_Board.State.Tasks[index].List = list
+	Main_Board.Add_update_header(c, "tasks."+strconv.Itoa(task_id)+".list", list)
 	c.JSON(200, gin.H{
 		"message": "task moved",
 	})
